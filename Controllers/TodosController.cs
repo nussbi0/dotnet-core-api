@@ -33,7 +33,7 @@ namespace dotnet_core_api.Controllers
         }
 
         // GET api/todos/{id}
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name="GetTodo")]
         public async Task<Todo> Get(string id)
         {
             return await _todoRepository.GetTodo(new ObjectId(id)) ?? new Todo();
@@ -41,16 +41,18 @@ namespace dotnet_core_api.Controllers
 
         // POST api/todos
         [HttpPost]
-        public void Post([FromBody]Todo todo)
+        public async Task<IActionResult> Post([FromBody]Todo todo)
         {
-            _todoRepository.AddTodo(todo);
+            await _todoRepository.AddTodo(todo);
+            return CreatedAtRoute("GetTodo", new {id = todo.Id}, todo);
         }
 
         // PUT api/todos/{id}
         [HttpPut("{id}")]
-        public void Put(string id, [FromBody]Todo todo)
+        public async Task<ActionResult> Put(string id, [FromBody]Todo todo)
         {
-            _todoRepository.UpdateTodoDocument(new ObjectId(id), todo);
+            await _todoRepository.UpdateTodoDocument(new ObjectId(id), todo);
+            return new NoContentResult();
         }
 
         // DELETE api/todos/{id}
