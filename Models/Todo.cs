@@ -6,10 +6,12 @@ namespace dotnet_core_api.Models
 {
     public class Todo
     {
-        [BsonId]
+        [BsonElement("_id")]
         public ObjectId Id { get; set; }
-        public string text { get; set; } = string.Empty;
-        // public DateTime UpdatedOn { get; set; } = DateTime.Now;
-        // public DateTime CreatedOn { get; set; } = DateTime.Now;
+        public string task { get; set; } = string.Empty;
+        public DateTime dueDate { get; set; }
+        public bool done { get; set; } = false;
+        public DateTime UpdatedOn { get; set; } = DateTime.Now;
+        public DateTime CreatedOn { get; set; } = DateTime.Now;
     }
 }

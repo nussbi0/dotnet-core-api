@@ -14,14 +14,9 @@ namespace dotnet_core_api.Data
     {
         private readonly TodoContext _context = null;
 
-        public TodoRepository(IOptions<Settings>settings)
+        public TodoRepository(IOptions<Settings> settings)
         {
             _context = new TodoContext(settings);
-        }
-
-        public async Task AddTodo(Todo item)
-        {
-            await _context.Todos.InsertOneAsync(item);
         }
 
         public async Task<IEnumerable<Todo>> GetAllTodos()
@@ -32,34 +27,73 @@ namespace dotnet_core_api.Data
             }
             catch (Exception ex)
             {
-                // log or manage the exception
                 throw ex;
             }
         }
 
-        public Task<Todo> GetTodo(string id)
+        public async Task<Todo> GetTodo(ObjectId id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.Todos.Find(Builders<Todo>.Filter.Eq("Id", id)).FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            { throw ex; }
         }
 
-        public Task<DeleteResult> RemoveAllTodos()
+        public async Task AddTodo(Todo item)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _context.Todos.InsertOneAsync(item);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public Task<DeleteResult> RemoveTodo(string id)
+        public async Task<DeleteResult> RemoveTodo(ObjectId id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.Todos.DeleteOneAsync(Builders<Todo>.Filter.Eq("Id", id));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
-        public Task<UpdateResult> UpdateTodo(string id, string text)
+        public async Task<ReplaceOneResult> UpdateTodoDocument(ObjectId id, Todo todo)
         {
-            throw new NotImplementedException();
+            var item = await GetTodo(id) ?? new Todo();
+            item.task = todo.task;
+            item.done = todo.done;
+            item.dueDate = todo.dueDate;
+            item.UpdatedOn = DateTime.Now;
+
+            try
+            {
+                return await _context.Todos.ReplaceOneAsync(n => n.Id.Equals(id), item, new UpdateOptions { IsUpsert = true });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        public Task<ReplaceOneResult> UpdateTodoDocument(string id, string text)
+        public async Task<DeleteResult> RemoveAllTodos()
         {
-            throw new NotImplementedException();
+            try
+            {
+                return await _context.Todos.DeleteManyAsync(new BsonDocument());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }
