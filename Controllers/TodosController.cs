@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using dotnet_core_api.Interfaces;
 using dotnet_core_api.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 
 namespace dotnet_core_api.Controllers
 {
+    [EnableCors("CorsPolicy")]
     [Produces("application/json")]
     [Route("api/[controller]")]
     public class TodosController : Controller
