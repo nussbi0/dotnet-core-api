@@ -8,6 +8,11 @@ namespace dotnet_core_api.Models
     {
         [BsonElement("_id")]
         public ObjectId Id { get; set; }
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string readableId
+        {
+            get { return Id.ToString(); }
+        }
         public string task { get; set; } = string.Empty;
         public DateTime dueDate { get; set; }
         public bool done { get; set; } = false;
